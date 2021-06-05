@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheets" href="./assets/css/style.css" />
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" 
+        crossorigin="anonymous"
+         />
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row w-100% p-1">
+            <h1 class="col-12 text-center bg-primary bg-gradient text-white">The Weather App</h1>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2>Search for a City:</h2>
+                <input type="search" placeholder="Las Vegas" />
+                <button type="submit">Search</button>
+                <div id="recent-city"></div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <h2></h2>
+                </div>
+                <div class="row"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/js/javascript.js"></script>
+</body>
+</html>
