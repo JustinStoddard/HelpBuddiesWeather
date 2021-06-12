@@ -21,23 +21,24 @@ const searchForLocation = async (cityName) => {
   await fetch(oneCallApiUrl).then(res => {
     return res.json();
   }).then(data => {
-    console.log(data.current);
-    oneCallData = data.current;
+    console.log("one call", data);
+    oneCallData = data;
   }).catch(err => {
     console.log(`There was an error fetching data [${err.message}]`);
     throw new Error(err.message);
   });
 
   renderGeneralCityInfo(forecastData, oneCallData);
+  render5DayForecast(oneCallData);
 };
 
 const renderGeneralCityInfo = (forecastData, oneCallData) => {
   const { city } = forecastData;
-  const { temp, wind_speed, humidity, uvi } = oneCallData;
+  const { temp, wind_speed, humidity, uvi } = oneCallData.current;
 
   const date = new Date();
   const dateDay = date.getDate();
-  const dateMonth = date.getMonth();
+  const dateMonth = date.getMonth() + 1;
   const dateYear = date.getFullYear();
   const formattedDate = `${dateMonth}/${dateDay}/${dateYear}`;
   const kelvinToFahrenheit = (((temp - 273.15) * (9 / 5)) + 32);
@@ -64,6 +65,38 @@ const renderGeneralCityInfo = (forecastData, oneCallData) => {
   `);
 
   $('#general-city-weather-info').empty().html(generalCityWeatherInfo);
+};
+
+const render5DayForecast = (oneCallData) => {
+  const { daily } = oneCallData;
+
+  const renderedForecastData = daily.map((item, i) => {
+    const { dt, temp, wind_speed, humidity } = item;
+
+    const date = new Date(dt * 1000);
+    console.log(date)
+    const dateDay = date.getDate();
+    const dateMonth = date.getMonth() + 1;
+    const dateYear = date.getFullYear();
+
+    const formattedDate = `${dateMonth}/${dateDay}/${dateYear}`;
+    const kelvinToFahrenheit = (((temp.day - 273.15) * (9 / 5)) + 32);
+    const renderedTemperture = `Temp: ${Math.round(kelvinToFahrenheit)}°F`;
+    const renderedWindSpeed = `Wind: ${wind_speed} MPH`;
+    const renderedHumidity = `Humidity: ${humidity} %`;
+
+    if (i < 3) return "";
+    return (`
+      <div class="forecast-data-card">
+        <h3>${formattedDate}</h3>
+        <h3>${renderedTemperture}</h3>
+        <h3>${renderedWindSpeed}</h3>
+        <h3>${renderedHumidity}</h3>
+      </div>
+    `);
+  });
+
+  $('#forecast-data').empty().html(renderedForecastData);
 };
 
 const searchButton = $('#forecast-search-button');

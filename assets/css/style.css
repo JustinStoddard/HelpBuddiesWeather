@@ -36,3 +36,18 @@
 .extreme {
   background: purple;
 }
+
+.forecast-data-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.forecast-data-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #727177;
+}
