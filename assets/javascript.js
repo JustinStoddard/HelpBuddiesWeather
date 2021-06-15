@@ -8,7 +8,6 @@ const searchForLocation = async (cityName) => {
   await fetch(forecastApiURL).then(res => {
     return res.json();
   }).then(data => {
-    console.log(data);
     forecastData = data;
   }).catch(err => {
     console.log(`There was an error fetching data [${err.message}]`);
@@ -21,7 +20,6 @@ const searchForLocation = async (cityName) => {
   await fetch(oneCallApiUrl).then(res => {
     return res.json();
   }).then(data => {
-    console.log("one call", data);
     oneCallData = data;
   }).catch(err => {
     console.log(`There was an error fetching data [${err.message}]`);
@@ -74,7 +72,6 @@ const render5DayForecast = (oneCallData) => {
     const { dt, temp, wind_speed, humidity } = item;
 
     const date = new Date(dt * 1000);
-    console.log(date)
     const dateDay = date.getDate();
     const dateMonth = date.getMonth() + 1;
     const dateYear = date.getFullYear();
@@ -85,7 +82,7 @@ const render5DayForecast = (oneCallData) => {
     const renderedWindSpeed = `Wind: ${wind_speed} MPH`;
     const renderedHumidity = `Humidity: ${humidity} %`;
 
-    if (i < 3) return "";
+    if (i > 5 || i === 0) return "";
     return (`
       <div class="forecast-data-card">
         <h3>${formattedDate}</h3>
@@ -99,8 +96,42 @@ const render5DayForecast = (oneCallData) => {
   $('#forecast-data').empty().html(renderedForecastData);
 };
 
+const localStorageUtil = (action, value) => {
+  if (action === "set") {
+    const searches = JSON.parse(localStorage.getItem("searches") ?? "[]");
+    searches.push(value);
+    localStorage.setItem("searches", JSON.stringify(searches));
+  } else if (action === "get") {
+    return JSON.parse(localStorage.getItem("searches") ?? "[]");
+  }
+};
+
+const renderSaveSearches = () => {
+  const searches = localStorageUtil("get");
+  const renderedSearches = searches.map((search, i) => {
+    const trimmedSearch = search.replace(/ /g, "-");
+    return `
+      <button id="${trimmedSearch + i}">${search}</button>
+    `;
+  });
+  $("#recent-city").empty().html(renderedSearches);
+
+  searches.map((search, i) => {
+    const trimmedSearch = search.replace(/ /g, "-");
+    $(`#${trimmedSearch}${i}`).on("click", () => {
+      searchForLocation(search);
+      $("#search-input").val(search);
+    });
+  });
+};
+
 const searchButton = $('#forecast-search-button');
-searchButton.on('click', () => {
+searchButton.off().on('click', () => {
   const searchInputValue = $('#search-input').val() || '';
-  searchForLocation(searchInputValue);
+  if (searchInputValue !== "") {
+    searchForLocation(searchInputValue);
+    searchForLocation(searchInputValue);
+    localStorageUtil("set", searchInputValue);
+    renderSaveSearches();
+  }
 });
